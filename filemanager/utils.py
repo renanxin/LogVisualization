@@ -43,5 +43,5 @@ def metaInfoCreate(fileName):
         metaInfo['filename'] = fileName
 
     print(ips)
-    with open(os.path.join(baseDir, 'tmp', 'meta', fileName.split(".")[0] + "_detail.json"), 'w') as f:
+    with open(os.path.join(baseDir, 'tmp', 'meta', fileName), 'w') as f:
         json.dump(metaInfo, f)

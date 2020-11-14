@@ -22,6 +22,7 @@ from django.contrib.staticfiles import views
 
 urlpatterns = [
     path('polls/',include('polls.urls')),
+    path('datagenerate/',include('datagenerate.urls')),
     path('',index, name="home"),
     path('filemanager/',include("filemanager.urls")),
     path('admin/', admin.site.urls),
