@@ -1,0 +1,89 @@
+body { 
+  background-color: #555555;
+  font-family:      Microsoft YaHei, serif;
+  font-size:        small;
+  margin:           0px;
+}
+
+header {
+  background-color:	#d9e4dd;
+  margin:			10px 10px 0px 10px;
+  height:			80px;
+}
+
+div#tableContainer {
+	display:		table;
+	border-spacing:	10px;
+	height:			520px;
+	width:			100%
+}
+
+div#tableRow {
+	display:		table-row;
+}
+
+section#user {
+    display:		table-cell;
+    background:		#cdc9c3;
+    padding:		15px;
+    vertical-align:	top;
+	width: 			20%;
+}
+section#draw {
+  display:			table-cell;
+  background:       #fbf7f0;
+  padding:          15px;
+  vertical-align:	top;
+  width: 			60%;
+}
+section#algorithm {
+  display:			table-cell;
+  background:		#cdc9c3;
+  padding:			15px;
+  vertical-align:	top;
+  width: 			20%;
+}
+
+footer {
+  background:		#d9e4dd;
+  text-align:		center;
+  padding:			15px;
+  margin:			0px 10px 10px 10px;
+  font-size:		100%;
+}
+
+h1 {
+	font-size:		200%;
+}
+h1#ttl {
+	padding-top:	20px;
+	padding-left:	20px;
+}
+
+h2 {
+	margin-top:		0px;
+	font-size:		120%;
+}
+
+nav {
+    background-color:	#d9e4dd;
+	margin:				10px 10px 0px 10px;
+}
+nav ul {
+	margin:				0px;
+	list-style-type:	none;
+	padding:			5px 0px 5px 0px;
+	font-size:			120%;
+}
+nav ul li {
+	display:			inline;
+	padding:			5px 20px 5px 20px;
+}
+nav ul li a:link, nav ul li a:visited{
+	color:				black;
+	text-decoration:	none;
+	font-weight:		bold;
+}
+nav ul li.selected{
+	background:			#94b4a4;
+}
