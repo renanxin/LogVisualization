@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django.http import request,HttpResponse,HttpResponseRedirect
 import json
-
 # Create your views here.
 
 
@@ -28,7 +27,9 @@ def paramParse(request):
     if res['error'] != 0:       # 传送的参数错误，直接返回
         return HttpResponse(json.dumps(res), content_type="application/json")
 
-    if featureType == 1:
+    if featureType == 0:
+        pass
+    else:
         pass
 
     return HttpResponse(json.dumps(res), content_type="application/json")
