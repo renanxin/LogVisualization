@@ -27,9 +27,7 @@ def freAnalyseLine(name,windowsType,viewObject,viewTarget,beginTime,endTime,wind
                 if endTime == -1:           # 如果结束时间没有设置
                     endTime = infos[-1]['time']
                 for info in infos:
-                    if info['time'] < beginTime:
-                        continue
-                    elif info['time'] > endTime:
+                    if info['time'] > endTime:
                         break
                     if info[viewobject] == viewTarget:
                         if len(tmp)>1 and info['time'] - windowsSize > tmp[0]:
@@ -38,16 +36,17 @@ def freAnalyseLine(name,windowsType,viewObject,viewTarget,beginTime,endTime,wind
                                 del tmp[0]
 
                         tmp.append(info['time'])
-                        if flag:
-                            time.append(info['time'])
-                            count.append(len(tmp))
-                            code = info['status']['code']       # 得到此次访问的状态码
-                            if code == 0:
-                                states.append(0)
-                            elif code == 1 or code == 3:
-                                states.append(1)
-                            else:
-                                states.append(2)
+                        if info['time'] >= beginTime:
+                            if flag:
+                                time.append(info['time'])
+                                count.append(len(tmp))
+                                code = info['status']['code']       # 得到此次访问的状态码
+                                if code == 0:
+                                    states.append(0)
+                                elif code == 1 or code == 3:
+                                    states.append(1)
+                                else:
+                                    states.append(2)
             res[viewTarget] = {'time':time,'count':count,'state':states}
         else:                           # 统计所有的目标
             tmp = {}   # 节点历史访问时间
@@ -72,9 +71,7 @@ def freAnalyseLine(name,windowsType,viewObject,viewTarget,beginTime,endTime,wind
                 if endTime == -1:               # 如果结束时间没有设置
                     endTime = infos[-1]['time']
                 for info in infos:
-                    if info['time'] < beginTime:
-                        continue
-                    elif info['time'] > endTime:
+                    if info['time'] > endTime:
                         break
                     if len(tmp[info[viewobject]])>1 and info['time'] - windowsSize > tmp[info[viewobject]][0]:
                         flag[info[viewobject]] = True
@@ -82,16 +79,17 @@ def freAnalyseLine(name,windowsType,viewObject,viewTarget,beginTime,endTime,wind
                             del tmp[info[viewobject]][0]
 
                     tmp[info[viewobject]].append(info['time'])
-                    if flag[info[viewobject]]:
-                        time[info[viewobject]].append(info['time'])
-                        count[info[viewobject]].append(len(tmp))
-                        code = info['status']['code']  # 得到此次访问的状态码
-                        if code == 0:
-                            states[info[viewobject]].append(0)
-                        elif code == 1 or code == 3:
-                            states[info[viewobject]].append(1)
-                        else:
-                            states[info[viewobject]].append(2)
+                    if info['time'] >= beginTime:
+                        if flag[info[viewobject]]:
+                            time[info[viewobject]].append(info['time'])
+                            count[info[viewobject]].append(len(tmp))
+                            code = info['status']['code']  # 得到此次访问的状态码
+                            if code == 0:
+                                states[info[viewobject]].append(0)
+                            elif code == 1 or code == 3:
+                                states[info[viewobject]].append(1)
+                            else:
+                                states[info[viewobject]].append(2)
             # 写入返回结果
             for key in states.keys():
                 res[key] = {'time':time[key],'count':count[key],'state':states[key]}
@@ -108,22 +106,21 @@ def freAnalyseLine(name,windowsType,viewObject,viewTarget,beginTime,endTime,wind
                 if endTime == -1:           # 如果结束时间没有设置
                     endTime = infos[-1]['time']
                 for info in infos:
-                    if info['time'] < beginTime:
-                        continue
-                    elif info['time'] > endTime:
+                    if info['time'] > endTime:
                         break
                     if info[viewobject] == viewTarget:
                         tmp.append(info['time'])
                         if len(tmp)==windowsSize:               # 暂存记录中
-                            time.append(info['time'])
-                            count.append(tmp[-1]-tmp[0])
-                            code = info['status']['code']       # 得到此次访问的状态码
-                            if code == 0:
-                                states.append(0)
-                            elif code == 1 or code == 3:
-                                states.append(1)
-                            else:
-                                states.append(2)
+                            if info['time'] >= beginTime:
+                                time.append(info['time'])
+                                count.append(tmp[-1]-tmp[0])
+                                code = info['status']['code']       # 得到此次访问的状态码
+                                if code == 0:
+                                    states.append(0)
+                                elif code == 1 or code == 3:
+                                    states.append(1)
+                                else:
+                                    states.append(2)
                             del tmp[0]
             res[viewTarget] = {'time':time,'count':count,'state':states}
         else:  # 统计所有的目标
@@ -147,26 +144,25 @@ def freAnalyseLine(name,windowsType,viewObject,viewTarget,beginTime,endTime,wind
                 if endTime == -1:  # 如果结束时间没有设置
                     endTime = infos[-1]['time']
                 for info in infos:
-                    if info['time'] < beginTime:
-                        continue
-                    elif info['time'] > endTime:
+                    if info['time'] > endTime:
                         break
 
                     tmp[info[viewobject]].append(info['time'])
                     if len(tmp[info[viewobject]]) == windowsSize:
-                        time[info[viewobject]].append(info['time'])
-                        count[info[viewobject]].append(len(tmp))
-                        code = info['status']['code']  # 得到此次访问的状态码
-                        if code == 0:
-                            states[info[viewobject]].append(0)
-                        elif code == 1 or code == 3:
-                            states[info[viewobject]].append(1)
-                        else:
-                            states[info[viewobject]].append(2)
+                        if info['time'] >= beginTime:
+                            time[info[viewobject]].append(info['time'])
+                            count[info[viewobject]].append(len(tmp))
+                            code = info['status']['code']  # 得到此次访问的状态码
+                            if code == 0:
+                                states[info[viewobject]].append(0)
+                            elif code == 1 or code == 3:
+                                states[info[viewobject]].append(1)
+                            else:
+                                states[info[viewobject]].append(2)
                         del tmp[info[viewobject]][0]
             # 写入返回结果
             for key in states.keys():
                 res[key] = {'time': time[key], 'count': count[key], 'state': states[key]}
     return res
 
-# print(freAnalyseLine('agents_1.json',0,0,'all',0,-1,200))
+print(freAnalyseLine('agents_1.json',0,0,'192.168.1.5',10000,20000,1000))

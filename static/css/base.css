@@ -14,7 +14,7 @@ header {
 div#tableContainer {
 	display:		table;
 	border-spacing:	10px;
-	height:			520px;
+	height:			550px;
 	width:			100%
 }
 
@@ -22,14 +22,14 @@ div#tableRow {
 	display:		table-row;
 }
 
-section#user {
+section#filter {
     display:		table-cell;
     background:		#cdc9c3;
     padding:		15px;
     vertical-align:	top;
 	width: 			20%;
 }
-section#draw {
+section#display {
   display:			table-cell;
   background:       #fbf7f0;
   padding:          15px;

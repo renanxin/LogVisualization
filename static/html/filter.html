@@ -1,0 +1,62 @@
+<h2>用户参数选择区</h2>
+
+<form action="http://127.0.0.1:8000/datagenerate/getdata" method="post">
+	<p>
+	特征类型:<br> 
+	<select name="featureType">
+		<option value="0">频率</option>
+		<option value="1">连续在线时长</option>
+		<option value="2">访问间隔</option>
+	</select>
+	</p>
+	<p>
+		观察对象: <input type="radio" name="viewObject" value="0"> IP
+				  <input type="radio" name="viewObject" value="1"> 账户 <br><br>
+		观察目标: <input type="radio" name="viewTarget" value="all">全部 <br><br>	
+	</p>
+	
+	<p>
+	观察维度:<br>
+	<select id="windowsType" onchange="sel()">
+		<option value="0">时间窗口</option>
+		<option value="1">次数窗口</option>
+	</select>
+	</p>
+	<p id='pTime'>
+		开始时间: <input type="text" name="beginTime">秒<br><br>
+		结束时间: <input type="text" name="endTime">秒<br> 
+		(上限：<span id='maxTime'></span>秒)<br><br>
+		特征窗口: <input type="text" name="windowsSize">秒
+	</p>
+
+	
+	
+	<p>
+		<input type="submit" value="提交">
+	</p>
+	
+</form>
+
+<script>
+	var observe=document.getElementById("windowsType");
+	if (observe.value=="0") {
+	    var pTime=document.getElementById("pTime");//显示
+	        pTime.style.display="block";
+	    var pNumber=document.getElementById("pNumber");//隐藏
+		        pNumber.style.display="none";
+	}
+</script>
+<script type="text/javascript">
+	function getMetaInfo() {
+		$.ajax({
+			type:"get",
+			url:"http://127.0.0.1:8000/filemanager/getMetaInfo",
+			dataType:"json",
+			success: function (data){
+				info = data[0]
+				$('#maxTime').append(info.endTime)
+			}
+		})
+	}
+	getMetaInfo();
+</script>
