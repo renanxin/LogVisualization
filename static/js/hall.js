@@ -14,3 +14,12 @@ function sel() {
 	}
 
 }
+
+
+var observe=document.getElementById("windowsType");
+if (observe.value=="0") {
+	var pTime=document.getElementById("pTime");//显示
+		pTime.style.display="block";
+	var pNumber=document.getElementById("pNumber");//隐藏
+			pNumber.style.display="none";
+}

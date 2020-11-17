@@ -1,6 +1,10 @@
 <h2>用户参数选择区</h2>
 
-<form action="http://127.0.0.1:8000/datagenerate/getdata" method="post">
+<form id="form1">
+	<P>
+	选择文件(带扩展名):
+	<input type="text" name="filename" placeholder="agents_1.json"><br><br>
+	</P>
 	<p>
 	特征类型:<br> 
 	<select name="featureType">
@@ -17,35 +21,33 @@
 	
 	<p>
 	观察维度:<br>
-	<select id="windowsType" onchange="sel()">
-		<option value="0">时间窗口</option>
-		<option value="1">次数窗口</option>
+	<select name="windowsType">
+		<option value="1">时间窗口</option>
+		<option value="0">次数窗口</option>
 	</select>
 	</p>
 	<p id='pTime'>
 		开始时间: <input type="text" name="beginTime">秒<br><br>
 		结束时间: <input type="text" name="endTime">秒<br> 
-		(上限：<span id='maxTime'></span>秒)<br><br>
-		特征窗口: <input type="text" name="windowsSize">秒
+		(上限：<span class='maxTime'></span>秒)<br><br>
+		特征窗口: <input type="text" name="windowsSize">
 	</p>
-
-	
-	
+	<!--
+	<p id='pNumber'>
+		开始时间: <input type="text" name="beginTime">秒<br><br>
+		结束时间: <input type="text" name="endTime">秒<br>
+		(上限：<span class='maxTime'></span>秒)<br><br>
+		特征窗口: <input type="text" name="windowsSize">次
+	</p>
+	-->
+	<br>
 	<p>
-		<input type="submit" value="提交">
+		<input type="button" id="btn" value="提交">
 	</p>
 	
 </form>
 
-<script>
-	var observe=document.getElementById("windowsType");
-	if (observe.value=="0") {
-	    var pTime=document.getElementById("pTime");//显示
-	        pTime.style.display="block";
-	    var pNumber=document.getElementById("pNumber");//隐藏
-		        pNumber.style.display="none";
-	}
-</script>
+
 <script type="text/javascript">
 	function getMetaInfo() {
 		$.ajax({
@@ -54,9 +56,62 @@
 			dataType:"json",
 			success: function (data){
 				info = data[0]
-				$('#maxTime').append(info.endTime)
+				$('.maxTime').append(info.endTime)
 			}
 		})
 	}
 	getMetaInfo();
 </script>
+<script>
+	$("#btn").click(function() {
+   		$.ajax({ 
+		   type: "POST",      //提交的方法
+		   url:"http://127.0.0.1:8000/datagenerate/getdata", //提交的地址 
+		   data:$("#form1").serialize(), //序列化表单值输出
+		   async: false, 
+		   error: function(request) {  //失败的话
+				alert("提交失败 error"); 
+		   }, 
+		   success: function(data) {
+
+				// 指定图表的配置项和数据
+			
+				var myChart = echarts.init(document.getElementById('main'));
+				myChart.setOption ({
+					title: {
+						text: ''
+					},
+					xAxis: {
+						data: []
+					},
+					yAxis: {
+					},
+					series: [{
+						type: 'line',
+						data: [],
+						//smooth: true
+					}]
+    			});
+
+				myChart.setOption({
+					xAxis: {
+						data: data.lineData["192.168.1.5"].time
+					},
+					series: [{
+						// 根据名字对应到相应的系列
+						name: '',
+						data: data.lineData["192.168.1.5"].count
+					}]
+				});
+
+				// alert(data.lineData["192.168.1.5"].state);  //成功就将返回的数据显示出来
+				//window.location.href="跳转页面"
+				/*for(var key in data.lineData){
+				var value = data[key];
+				alert(key); 
+				}*/
+		   }
+		});
+	}); 
+</script>
+

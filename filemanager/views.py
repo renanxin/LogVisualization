@@ -12,7 +12,7 @@ def index(request):
 
 # 跳转文件上传页面
 def upload(request):
-    return render(request, 'filemanager/fileUpload.html')
+    return HttpResponseRedirect("/static/html/fileUpload.html")
 
 #   处理文件上传
 def fileUpload(request):
