@@ -175,7 +175,6 @@ def freAnalyseLine(name,windowsType,viewObject,viewTarget,beginTime,endTime,wind
 
 
 
-
 # 基于频率分析的盒线图
 """ count中5个数组对应的5种状态变化
 0   安全->怀疑
