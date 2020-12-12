@@ -36,6 +36,22 @@ section#display {
   vertical-align:	top;
   width: 			60%;
 }
+
+section#upload {
+  display:		table-cell;
+  background:		#cdc9c3;
+  padding:		15px;
+  vertical-align:	top;
+width: 			20%;
+}
+section#uploadMetaInfo {
+display:			table-cell;
+background:       #fbf7f0;
+padding:          15px;
+vertical-align:	top;
+width: 			60%;
+}
+
 section#algorithm {
   display:			table-cell;
   background:		#cdc9c3;

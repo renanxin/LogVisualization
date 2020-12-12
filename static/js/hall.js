@@ -1,3 +1,20 @@
+
+var observe=document.getElementByName("viewObject");
+observe[0].click=function(){
+	var vTip=document.getElementById("vTip");//显示
+	vTip.style.display="block";
+	var vTaccount=document.getElementById("vTaccount");//隐藏
+	vTaccount.style.display="none";
+}
+observe[1].click=function(){
+	var vTip=document.getElementById("vTip");//显示
+	vTip.style.display="none";
+	var vTaccount=document.getElementById("vTaccount");//隐藏
+	vTaccount.style.display="block";
+}
+
+
+/*
 function sel() {
 	var observe=document.getElementById("windowsType");
 	if (observe.value=="0") {
@@ -23,3 +40,4 @@ if (observe.value=="0") {
 	var pNumber=document.getElementById("pNumber");//隐藏
 			pNumber.style.display="none";
 }
+*/

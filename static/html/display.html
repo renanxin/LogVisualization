@@ -1,7 +1,155 @@
 <h2>绘图区</h2>
 <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
-<div id="main" style="width:600px; height:400px;"></div>
+<div id="lineChart" style="width:540px; height:400px; margin: 50px 0px 0px 0px; float:left"></div>
+<div id="boxChart" style="width:540px; height:400px; margin: 50px 0px 0px 0px; float:left"></div>
 <script>
-	// 基于准备好的dom，初始化echarts实例
+	$("#btn").click(function() {
+		//var formSerialize = $("#form1").serialize();//序列化表单值输出, 即输出name=value&name=value&name=value...的字符串
+		var formSerializeArray = $("#form1").serializeArray();//对象形式, 即输出[{"name":"xxx","value":"xxx"},{"name":"xxx","value":"xxx"},{:}] 
+		var params = {
+			viewTarget: ViewTargettoArray(),
+		}
 
+		/*把params整合进表单输出(替换原viewTraget)*/
+		$.each(formSerializeArray, function(i, field){
+			if(field.name != 'viewTarget'){
+				params[field.name] = field.value;
+			}
+		})
+		alert(JSON.stringify(params));//JSON.stringify用于显示对象数据
+
+		var beginTime = params.beginTime;//ajax内要用到
+		var endTime = params.endTime;//ajax内要用到
+
+		$.ajax({ 
+			type: "POST",      //提交的方法
+			url:"http://127.0.0.1:8000/datagenerate/getdata", //提交的地址 
+			data:params, //
+			traditional: true,
+			async: false, 
+			error: function(request) {  //失败的话
+				alert("提交失败 error"); 
+			}, 
+			success: function(data) {
+				//alert(JSON.stringify( Object.keys(data.lineData) ));//alert打印对象用JSON.stringify
+				alert(Object.keys(data.lineData).length);
+				//指定图表的配置项和数据
+				//基于准备好的dom，初始化echarts实例
+				var selected=$('select[name=windowsType]').val();
+				var myLineChart = echarts.init(document.getElementById('lineChart'));
+				
+
+				var inputLineDatas = []; //定义一个数组，将会包含多个对象
+				
+				var ipNumber = Object.keys(data.lineData).length//获取对象长度，即需要堆叠的ip个数
+				while(ipNumber > 0){
+					var inputLineData = {}; //定义一个对象，多次push进数组
+					inputLineData.name = Object.keys(data.lineData)[ipNumber-1];//给对象添加key(name) value(ip字符串)
+					inputLineData.data = data.lineData[Object.keys(data.lineData)[ipNumber-1]].combine[0];//给对象添加key(data), [0]是指第一次封禁前的数据
+					inputLineData.type = 'line';
+					//inputLineData['截断点'] = data.lineData[Object.keys(data.lineData)[ipNumber-1]].combine[0].slice(-1)[0];//.slice获取最后一个元素(放进数组)
+
+					inputLineDatas.push(inputLineData);
+
+					ipNumber--;
+
+					//alert(inputLineData.name);//.name和["name"]通用, 但和[name]不通用!
+				}
+				//alert(JSON.stringify(inputLineDatas));
+
+				/****给echarts填充数据****/
+				myLineChart.setOption({
+					title: {
+						left: 'center',
+						text: '折线图',
+					},
+					legend: 
+					{
+						data:  Object.keys(data.lineData),
+						right: 10,
+						top: 30,
+					},
+
+					xAxis: {
+						name: 'Time(s)',//和"name"通用!
+						min: beginTime, 
+        				max: endTime,  //起始&终止
+						//data: []
+					},
+
+					yAxis: {
+						name: selected == 0 ? 'Time in Window' : 'Visits in Window',
+					},
+					series: inputLineDatas
+				}, true);//true代表可以自动清除上一次加载的数据
+
+				var testData = echarts.dataTool.prepareBoxplotData([
+					[850, 740, 900, 1070, 930, 850, 950, 980, 980, 880, 1000, 980, 930, 650, 760, 810, 1000, 1000, 960, 960],
+					[960, 940, 960, 940, 880, 800, 850, 880, 900, 840, 830, 790, 810, 880, 880, 830, 800, 790, 760, 800],
+					[880, 880, 880, 860, 720, 720, 620, 860, 970, 950, 880, 910, 850, 870, 840, 840, 850, 840, 840, 840],
+					[890, 810, 810, 820, 800, 770, 760, 740, 750, 760, 910, 920, 890, 860, 880, 720, 840, 850, 850, 780],
+					[890, 840, 780, 810, 760, 810, 790, 810, 820, 850, 870, 870, 810, 740, 810, 940, 950, 800, 810, 870]
+				]);
+
+				var myBoxChart = echarts.init(document.getElementById('boxChart'));
+				/*myBoxChart.setOption ({
+					xAxis: {
+						name: 'Time(s)',
+						data: []
+					},
+					yAxis: {
+						name: '',
+					},
+					series: [
+					{
+						type: 'line',
+						data: [],
+					},
+					]
+				});*/
+
+				myBoxChart.setOption({
+					title: {
+						left: 'center',
+						text: '箱线图',
+					},
+
+					xAxis: {
+						type: 'category',
+						data: testData.axisData,
+					},
+					yAxis: {
+						type: 'value',
+					},
+					series: [
+						{
+							name: 'boxplot',
+							type: 'boxplot',							
+							data: testData.boxData,
+						},
+					]
+				});
+
+				//成功就将返回的数据显示出来
+				//window.location.href="跳转页面" 
+				/*for(var key in data.lineData){
+					var value = data[key];
+					alert(key); 
+				}*/
+			}
+		});
+		
+	});//$("#btn").click(function()结束
+
+
+	function ViewTargettoArray(){//把viewTarget各个值(一个checkbox里的多个value)组合成数组
+		var vT = new Array();
+		$("input[name='viewTarget']").each(function(i, field){
+			if($(this).prop("checked") == true){
+				vT.push($(this).val());
+			}
+		});
+		return vT;
+
+	}
 </script>

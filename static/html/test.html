@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>日志可视化</title>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.js"></script>
+</head>
+
+
+$('.radio10').empty()
+$('.radio10').append(Object.keys(info.ipDetail)[0])
+$('.radio10').val(Object.keys(info.ipDetail)[0])
+$('.radio11').empty()
+$('.radio11').append(Object.keys(info.ipDetail)[1])
+$('.radio11').val(Object.keys(info.ipDetail)[1])
+$('.radio12').empty()
+$('.radio12').append(Object.keys(info.ipDetail)[2])
+$('.radio12').val(Object.keys(info.ipDetail)[2])
+$('.radio13').empty()
+$('.radio13').append(Object.keys(info.ipDetail)[3])
+$('.radio13').val(Object.keys(info.ipDetail)[3])
+$('.radio14').empty()
+$('.radio14').append(Object.keys(info.ipDetail)[4])
+$('.radio14').val(Object.keys(info.ipDetail)[4])
+
+$('.radio20').empty()
+$('.radio20').append(Object.keys(info.accountDetail)[0])
+$('.radio20').val(Object.keys(info.accountDetail)[0])
+$('.radio21').empty()
+$('.radio21').append(Object.keys(info.accountDetail)[1])
+$('.radio21').val(Object.keys(info.accountDetail)[1])
+$('.radio22').empty()
+$('.radio22').append(Object.keys(info.accountDetail)[2])
+$('.radio22').val(Object.keys(info.accountDetail)[2])
+$('.radio23').empty()
+$('.radio23').append(Object.keys(info.accountDetail)[3])
+$('.radio23').val(Object.keys(info.accountDetail)[3])
+$('.radio24').empty()
+$('.radio24').append(Object.keys(info.accountDetail)[4])
+$('.radio24').val(Object.keys(info.accountDetail)[4])
+
+
+
+myLineChart.setOption ({
+					
+    series: [
+        {
+            name: Object.keys(data.lineData)[0],
+            type: 'line',
+            //data: [],
+        },
+        {
+            name: Object.keys(data.lineData)[1],
+            type: 'line',
+            //data: [],
+        },
+        {
+            name: Object.keys(data.lineData)[2],
+            type: 'line',
+            //data: [],
+        },
+        {
+            name: '截断点',
+            symbolSize: 10,
+            type: 'scatter',
+            //data: [],
+        },
+    ]
+});
+
+

@@ -1,0 +1,20 @@
+{
+	"categories": [
+		"apple",
+		"orange",
+		"litchi",
+		"peach",
+        "Chestnuts",
+        "Pears",
+        "Persimmon"
+	],
+	"data": [
+		500,
+		280,
+		386,
+		190,
+		107,
+		207,
+		452
+	]
+}

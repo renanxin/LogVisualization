@@ -1,0 +1,22 @@
+<nav>
+	<ul>
+		<li><a href="single.html">单变量可视化</a></li>
+        <li><a href="multi.html">多变量可视化</a></li>
+        <li  class="selected"><a href="index.html">数据上传</a></li>
+	</ul>
+</nav>
+<div id="tableContainer">
+	<div id="tableRow">
+    <section id="upload"></section>
+    <script>
+        $("#upload").load("upload.html");
+    </script>
+        
+    <section id="uploadMetaInfo"></section>
+    <script>
+        $("#uploadMetaInfo").load("uploadMetaInfo.html");
+    </script>        
+    
+
+</div> <!-- tableRow -->
+</div> <!-- tableContainer -->

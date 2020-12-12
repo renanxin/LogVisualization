@@ -1,0 +1,119 @@
+<h2>元信息展示区</h2>
+
+<div id="metaInfo">
+    <br>
+    <hr style="border:1px double #e8e8e8"/>
+</div>
+
+<script type="text/javascript">
+    function sleep(n) { //n表示的毫秒数
+        var start = new Date().getTime();
+        while (true) if (new Date().getTime() - start > n) break;
+    }
+
+    function getMetaInfo() {
+
+        // 字符串格式化函数
+        String.format = function() {
+            if (arguments.length == 0)
+                return null;
+            var str = arguments[0];
+            for ( var i = 1; i < arguments.length; i++) {
+                var re = new RegExp('\\{' + (i - 1) + '\\}', 'gm');
+                str = str.replace(re, arguments[i]);
+            }
+            return str;
+        };
+
+        template_item = `
+            <tr>
+                <td id="item">{0}</td>
+                <td id="item">{1}</td>
+                <td id="item">{2}</td>
+                <td id="item">{3}</td>
+            </tr>
+        `
+        template = `
+        <table id="meta">
+            <tr>
+            <td id="filename">{0}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td id="block"></td>
+            <td>
+                <table>
+                    <tr>
+                        <td id="property">开始时间</td>
+                        <td id="item">{1}</td>
+                    </tr>
+                    <tr>
+                        <td id="property">结束时间</td>
+                        <td id="item">{2}</td>
+                    </tr>
+                    <tr>
+                        <td id="property">ip个数</td>
+                        <td id="item">{3}</td>
+                    </tr>
+                    <tr>
+                        <td id="property">account个数</td>
+                        <td id="item">{4}</td>
+                    </tr>
+
+
+                    <tr><td id="kongbai"></td></tr>
+                    <tr>
+                        <td id="property">ips</td>
+                        <td>
+                            <table id="ips" class={5}>
+                            </table>
+                        </td>
+                    </tr>
+
+
+                    <tr><td id="kongbai"></td></tr>
+                    <tr>
+                        <td id="property">accounts</td>
+                        <td>
+                            <table id="accounts" class={6}>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr><td style="height: 20px"></td></tr>
+        </table>
+        <hr style="border:1px double #e8e8e8"/>
+        `
+
+        $.ajax({
+            type:"get",
+            url:"http://127.0.0.1:8000/filemanager/getMetaInfo",
+            dataType:"json",
+            success: function (data){
+                for(let i=0;i<data.length;++i){
+                    info = data[i]
+
+                    $('#metaInfo').append(String.format(template,info.filename,info.beginTimeStr,
+                    info.endTimeStr,
+                    info.ipNum,
+                    info.accountNum,
+                    'ips'+i,
+                    'accounts'+i))//12.05版beginTime->beginTimeStr, endTime->endTimeStr
+
+                    $.each(info.ipDetail,function (k,v){
+                        $('.ips'+i).append(String.format(template_item,k,v[0],v[1],v[2]))
+                    })
+
+                    $.each(info.accountDetail,function (k,v){
+                        $('.accounts'+i).append(String.format(template_item,k,v[0],v[1],v[2]))
+                    })
+
+                }
+            }
+        })
+    }
+
+    getMetaInfo();
+</script>
