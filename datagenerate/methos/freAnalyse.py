@@ -5,7 +5,6 @@ import numpy as np
 
 # 基于频率的分析
 def freAnalyseLine(name, windowsType, viewObject, viewTarget, beginTime, endTime, windowsSize):
-    print(viewTarget)
     res = {}
     baseDir = os.path.dirname(os.path.abspath(__name__))
     # baseDir = 'C:\\Users\\renwei\\Desktop\\日志可视化\\LogVisualization'
@@ -29,11 +28,11 @@ def freAnalyseLine(name, windowsType, viewObject, viewTarget, beginTime, endTime
     for target in viewTarget:
         viewTargets.add(target)
 
-    if windowsType == 1:  # 使用的是时间窗口
+    if windowsType == 0:  # 使用的是时间窗口
 
 
         tmp = {}  # 节点历史访问时间
-        time = {}  # 每次访问的时间节点
+        timeStr = {}  # 每次访问的格式化时间
         count = {}  # 每次访问的时间窗口内频数
         state = {}  # 每次访问的状态 0表示通过 1表示怀疑 2表示封禁
         flag = {}  # 记录tmp中是否出现过时间跨度大于windowsSize
@@ -41,7 +40,7 @@ def freAnalyseLine(name, windowsType, viewObject, viewTarget, beginTime, endTime
 
         for key in viewTarget:
             tmp[key] = []
-            time[key] = []
+            timeStr[key] = []
             count[key] = []
             state[key] = []
             flag[key] = False
@@ -68,7 +67,7 @@ def freAnalyseLine(name, windowsType, viewObject, viewTarget, beginTime, endTime
                     if flag[tmp_key]:
                         code = info['status']['code']  # 得到此次访问的状态码
                         if code >=0 and code < 3  and not (code == 2 and ignore[info[viewobject]]):
-                            time[tmp_key].append(info['time'])
+                            timeStr[tmp_key].append(info['timeStr'])
                             count[tmp_key].append(len(tmp[tmp_key]))
 
                             if code == 0:
@@ -81,18 +80,18 @@ def freAnalyseLine(name, windowsType, viewObject, viewTarget, beginTime, endTime
                                 ignore[tmp_key] = True
                                 state[tmp_key].append(2)
         for key in viewTarget:
-            res[key] = {'time':time[key],'count':count[key],'state':state[key]}
+            res[key] = {'time':timeStr[key],'count':count[key],'state':state[key]}
 
     else:  # 使用的是次数窗口
         tmp = {}  # 节点历史访问时间
-        time = {}  # 每次访问的时间节点
+        timeStr = {}  # 每次访问的格式化时间
         count = {}  # 每次访问的时间窗口内频数
         state = {}  # 每次访问的状态 0表示通过 1表示怀疑 2表示封禁
         ignore = {}
 
         for key in viewTarget:
             tmp[key] = []
-            time[key] = []
+            timeStr[key] = []
             count[key] = []
             state[key] = []
             ignore[key] = False
@@ -112,7 +111,7 @@ def freAnalyseLine(name, windowsType, viewObject, viewTarget, beginTime, endTime
                     if info['time'] >= beginTime:
                         code = info['status']['code']  # 得到此次访问的状态码
                         if code >=0 and code < 3  and not (code == 2 and ignore[info[viewobject]]):
-                            time[info[viewobject]].append(info['time'])
+                            timeStr[info[viewobject]].append(info['timeStr'])
                             count[info[viewobject]].append(tmp[info[viewobject]][-1] - tmp[info[viewobject]][0])
                             if code == 0:
                                 ignore[info[viewobject]] = False
@@ -126,15 +125,11 @@ def freAnalyseLine(name, windowsType, viewObject, viewTarget, beginTime, endTime
                     del tmp[info[viewobject]][0]
 
         for key in state.keys():
-            res[key] = {'time': time[key], 'count': count[key], 'state': state[key]}
+            res[key] = {'time': timeStr[key], 'count': count[key], 'state': state[key]}
 
     for key in viewTarget:
-        print("============================================")
-        print(key)
-        print(res[key].keys())
-        tmp = np.array(list(zip(res[key]['time'],res[key]['count']))).tolist()
+        tmp = np.concatenate((np.array(res[key]['time']).reshape((-1,1)),np.array(res[key]['count']).reshape((-1,1)),np.array(res[key]['state']).reshape((-1,1))),axis=1).tolist()
         combine = []
-        state = []
 
 
         idx = 0
@@ -143,10 +138,9 @@ def freAnalyseLine(name, windowsType, viewObject, viewTarget, beginTime, endTime
                 k = 1
                 if i == len(res[key]['time']):
                     k=0
-                state.append(res[key]['state'][idx:i + k])
                 combine.append(tmp[idx:i + k])
                 idx = i + 1
-        res[key] = {'combine': combine,'state': state}
+        res[key] = combine
     return res
 
 # print(freAnalyseLine('agents_1.json',1,0,'192.168.1.5',3000,20000,1000)['192.168.1.5']['count'])
@@ -194,7 +188,7 @@ def freAnalyseBox(name, windowsType, viewObject, viewTarget, beginTime, endTime,
         viewTargets.add(target)
 
 
-    if windowsType == 0:  # 使用的是次数窗口
+    if windowsType == 1:  # 使用的是次数窗口
         tmp = {}
         count = {}  # 记录每次状态转变时的特征
         preState = {}  # 前一次访问的状态
@@ -298,6 +292,15 @@ def freAnalyseBox(name, windowsType, viewObject, viewTarget, beginTime, endTime,
                                 tmp[info[viewobject]][-1] - tmp[info[viewobject]][0])
             preState[info[viewobject]] = state  # 记录前一次状态
         res = count
+    for key in res.keys():
+        for i in range(len(res[key])):
+            tmp = []
+            if len(res[key][i])>0:
+                tmp.append(np.min(np.array(res[key][i],dtype=float)))
+                tmp.append(np.mean(np.array(res[key][i],dtype=float)))
+                tmp.append(np.max(np.array(res[key][i],dtype=float)))
+                tmp.append(np.std(np.array(res[key][i],dtype=float)))
+            res[key][i] = tmp
     return res
 
 # print(freAnalyseBox('agents_1.json',0,1,'255.168.89.5',0,-1,200))

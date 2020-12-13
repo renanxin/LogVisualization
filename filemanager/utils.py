@@ -144,6 +144,8 @@ def metaInfoCreate(fileName):
             log['time'] -= minTime
             log['ip'] = log['_source']['clientIP']
             del log['_source']['clientIP']
+            log['timeStr'] = log['_source']['operationTime']
+            del log['_source']['operationTime']
             result = json.loads(log['_source']['operationResult'])
             log['status'] = {}
             if result['rtnCode'] == '000000':
@@ -157,10 +159,10 @@ def metaInfoCreate(fileName):
 
         for log in logs:
             if log['status']['code'] >-1:
-                endStr = log['_source']['operationTime']
+                endStr = log['timeStr']
                 end = log['time']
                 if begin==-1:
-                    beginStr = log['_source']['operationTime']
+                    beginStr = log['timeStr']
                     begin = log['time']
             # 遇到新的IP
             if log['ip'] not in ips:
