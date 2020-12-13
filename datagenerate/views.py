@@ -10,7 +10,6 @@ from datagenerate.methos.freAnalyse import freAnalyseLine,freAnalyseBox
 
 def paramParse(request):
     fileName = request.POST.get('fileName')  # 获取解析文件名
-    fileName = 'agents_1.json'
     featureType = int(request.POST.get('featureType', 0))  # 获取特征类型，默认为0(频率)
     windowsType = int(request.POST.get('windowsType', 0))  # 获取窗口类型，默认为0(时间窗口)
     viewObject = int(request.POST.get('viewObject', 0))  # 获取观察对象，默认为0(ip)

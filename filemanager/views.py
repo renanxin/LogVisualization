@@ -18,13 +18,17 @@ def upload(request):
 def fileUpload(request):
     files = request.FILES.getlist('upload')
     baseDir = os.path.dirname(os.path.abspath(__name__))
-    for file in files:
-        with open(os.path.join(baseDir,'tmp',file.name),'wb') as f:
-            for chrunk in file.chunks():
-                f.write(chrunk)
-            f.flush()
-        metaInfoCreate(file.name)
-    return HttpResponseRedirect("/")
+    try:
+        for file in files:
+            with open(os.path.join(baseDir,'tmp',file.name),'wb') as f:
+                for chrunk in file.chunks():
+                    f.write(chrunk)
+                f.flush()
+            metaInfoCreate(file.name)
+    except:     # 发生异常
+        return HttpResponse(json.dumps({'code':400}), content_type="application/json")
+    else:
+        return HttpResponse(json.dumps({'code': 200}), content_type="application/json")
 
 
 # 获取所有的元信息
@@ -37,4 +41,4 @@ def getAllMetaInfo(request):
         with open(os.path.join(metaDir, fileName)) as f:
             info = json.load(f)
         res.append(info)
-    return HttpResponse(json.dumps(res), content_type="application/json")
+    return HttpResponse(json.dumps({'code':200,'data':res}), content_type="application/json")
