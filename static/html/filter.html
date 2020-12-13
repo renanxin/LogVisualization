@@ -73,66 +73,8 @@
 
 <script>
 	
-	$(document).ready(function(){//页面加载完成时要显示的内容[开始]
-
-		/*给filename下拉列表传入表项*/
-		function getFileName(){
-			$.ajax({
-				type:"get",
-				url:"http://127.0.0.1:8000/filemanager/getMetaInfo",
-				dataType:"json",
-				success: function (data){
-					$.each(data, function(i, field){//i是data数组的index，field是对应index的值。这里动态给filename下拉列表添加条目
-						if(i == 0){//默认选中第一个
-							$('#filename').append("<option value='" + field["filename"] + "' selected>" + field["filename"] + "</option>")
-						}
-						else
-							$('#filename').append("<option value='" + field["filename"] + "'>" + field["filename"] + "</option>");					
-					});
-				}
-			})	
-		}			
-		getFileName();
-
-		/*根据文件名下拉列表选中项决定观察目标中ip和account内容*/
-		$.ajax({
-			type:"get",
-			url:"http://127.0.0.1:8000/filemanager/getMetaInfo",
-			dataType:"json",
-			success: function (data){
-				$.each(data, function(i, field){//二重循环:第一重选中filename,第二重找到filename下所有ip和account动态加入多选按钮
-					var selected=$('select[name=filename]').val();
-					if (selected == field["filename"]){
-						info = data[i]
-						$('.maxTime').empty()
-						$('.maxTime').append(info.endTime)
-						$('#vTip').empty()//每次变换后要先清空之前显示的内容
-						$('#vTaccount').empty()
-						$.each(Object.keys(info.ipDetail), function(i, field){//Object.keys把map中的键都取出来作为一个数组, 此处i为0,1,2... field为ip值
-								/*往vTip中动态加入checkbox*/
-								$('#vTip').append("<input type='checkbox' name='viewTarget' class='checkbox1"+ i +"' value=''> <span class='checkbox1"+ i +"'></span>")
-								var tempName1 = 'checkbox1' + i; //拼接字符串
-								$("."+tempName1).empty()//注意jQuery选择器加入变量的方法
-								$("."+tempName1).append(Object.keys(info.ipDetail)[i]) //为每一个radio/checkbox赋值和注释
-								$("."+tempName1).val(Object.keys(info.ipDetail)[i])
-							}
-						)
-						$.each(Object.keys(info.accountDetail), function(i, field){
-								/*往vTaccount中动态加入checkbox*/
-								$('#vTaccount').append("<input type='checkbox' name='viewTarget' class='checkbox2"+ i +"' value=''> <span class='checkbox2"+ i +"'></span>")
-								var tempName2 = 'checkbox2' + i;
-								$("."+tempName2).empty()
-								$("."+tempName2).append(Object.keys(info.accountDetail)[i])
-								$("."+tempName2).val(Object.keys(info.accountDetail)[i])
-							}
-						)
-
-					};					
-				});
-			}
-		})
+	$(document).ready(function(){//页面加载完成时要显示的内容
 		
-		/*根据观察对象单选按钮决定观察目标显示ip组还是account组*/
 		var checkValue = $('input:radio[name=viewObject]:checked').val();
 		if (checkValue==0){
 			var vTip=document.getElementById("vTip");//显示
@@ -147,16 +89,13 @@
 			vTaccount.style.display="block";
 		}
 
-		/*根据观察维度下拉列表决定特征窗口的单位*/
 		var selected=$('select[name=windowsType]').val();
 		selected == 0 ? ($('.windowUnit').empty(), $('.windowUnit').append('次')) 
 						: ($('.windowUnit').empty(), $('.windowUnit').append('秒'));
 
-	})//页面加载完成时要显示的内容[结束]
+	})
 
-
-
-	/*当观察对象单选按钮有点击动作: 决定观察目标显示ip组还是account组*/
+	//当viewObject单选按钮有点击时的动作:vTip和vTaccount的显示与隐藏
 	$('input:radio[name=viewObject]').click(function(){
 		var checkValue = $('input:radio[name=viewObject]:checked').val();
 		if (checkValue==0){
@@ -173,27 +112,40 @@
 		}
 	})
 
-	/*当观察维度下拉列表有变换动作: 决定特征窗口的单位*/
+	//当windowsType下拉列表有变换时的动作
 	$('select[name=windowsType]').change(function(){
 		var selected=$('select[name=windowsType]').val();
 		selected == 0 ? ($('.windowUnit').empty(), $('.windowUnit').append('次')) 
 						: ($('.windowUnit').empty(), $('.windowUnit').append('秒'));
 	})
 
+
 </script>
 
 
 <script type="text/javascript">
+	function getFileName(){//给filename下拉列表传入表项
+		$.ajax({
+			type:"get",
+			url:"http://127.0.0.1:8000/filemanager/getMetaInfo",
+			dataType:"json",
+			success: function (data){
+				$.each(data, function(i, field){//i是data数组的index，field是对应index的值。这里动态给filename下拉列表添加条目
+					$('#filename').append("<option value='" + field["filename"] + "'>" + field["filename"] + "</option>");					
+				});
+			}
+		})	
+	}			
+	getFileName();
 
-	/*当文件名下拉列表有变换动作: 给观察目标加入ip和account*/
-	$('select[name=filename]').change(function(){
+	$('select[name=filename]').change(function(){//当filename下拉列表有变换时的动作
 		var selected=$('select[name=filename]').val();
 		$.ajax({
 			type:"get",
 			url:"http://127.0.0.1:8000/filemanager/getMetaInfo",
 			dataType:"json",
 			success: function (data){
-				$.each(data, function(i, field){//二重循环:第一重选中filename,第二重找到filename下所有ip和account动态加入多选按钮
+				$.each(data, function(i, field){//二重循环:第一重选中filename,第二重找到filename下所有ip和account动态加入radio按钮
 					if (selected == field["filename"]){
 						info = data[i]
 						$('.maxTime').empty()
@@ -236,6 +188,11 @@
 			}
 		})
 	})
+
+
+
+	
+
 
 
 </script>

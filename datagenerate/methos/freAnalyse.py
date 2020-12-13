@@ -5,6 +5,7 @@ import numpy as np
 
 # 基于频率的分析
 def freAnalyseLine(name, windowsType, viewObject, viewTarget, beginTime, endTime, windowsSize):
+    print(viewTarget)
     res = {}
     baseDir = os.path.dirname(os.path.abspath(__name__))
     # baseDir = 'C:\\Users\\renwei\\Desktop\\日志可视化\\LogVisualization'
@@ -128,7 +129,9 @@ def freAnalyseLine(name, windowsType, viewObject, viewTarget, beginTime, endTime
             res[key] = {'time': time[key], 'count': count[key], 'state': state[key]}
 
     for key in viewTarget:
-
+        print("============================================")
+        print(key)
+        print(res[key].keys())
         tmp = np.array(list(zip(res[key]['time'],res[key]['count']))).tolist()
         combine = []
         state = []

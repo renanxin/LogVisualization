@@ -18,9 +18,6 @@
 		})
 		alert(JSON.stringify(params));//JSON.stringify用于显示对象数据
 
-		var beginTime = params.beginTime;//ajax内要用到
-		var endTime = params.endTime;//ajax内要用到
-
 		$.ajax({ 
 			type: "POST",      //提交的方法
 			url:"http://127.0.0.1:8000/datagenerate/getdata", //提交的地址 
@@ -31,57 +28,50 @@
 				alert("提交失败 error"); 
 			}, 
 			success: function(data) {
-				//alert(JSON.stringify( Object.keys(data.lineData) ));//alert打印对象用JSON.stringify
-				alert(Object.keys(data.lineData).length);
+				alert(JSON.stringify( Object.keys(data.lineData) ));//alert打印对象用JSON.stringify
 				//指定图表的配置项和数据
 				//基于准备好的dom，初始化echarts实例
 				var selected=$('select[name=windowsType]').val();
 				var myLineChart = echarts.init(document.getElementById('lineChart'));
-				
+				myLineChart.setOption ({
+					xAxis: {
+						name: 'Time(s)',
+						data: []
+					},
+					yAxis: {
+						name: '',
+					},
+					series: [
+					{
+						type: 'line',
+						data: [],
+					},
+					]
+				});
 
-				var inputLineDatas = []; //定义一个数组，将会包含多个对象
-				
-				var ipNumber = Object.keys(data.lineData).length//获取对象长度，即需要堆叠的ip个数
-				while(ipNumber > 0){
-					var inputLineData = {}; //定义一个对象，多次push进数组
-					inputLineData.name = Object.keys(data.lineData)[ipNumber-1];//给对象添加key(name) value(ip字符串)
-					inputLineData.data = data.lineData[Object.keys(data.lineData)[ipNumber-1]].combine[0];//给对象添加key(data), [0]是指第一次封禁前的数据
-					inputLineData.type = 'line';
-					//inputLineData['截断点'] = data.lineData[Object.keys(data.lineData)[ipNumber-1]].combine[0].slice(-1)[0];//.slice获取最后一个元素(放进数组)
-
-					inputLineDatas.push(inputLineData);
-
-					ipNumber--;
-
-					//alert(inputLineData.name);//.name和["name"]通用, 但和[name]不通用!
-				}
-				//alert(JSON.stringify(inputLineDatas));
-
-				/****给echarts填充数据****/
 				myLineChart.setOption({
 					title: {
 						left: 'center',
 						text: '折线图',
 					},
-					legend: 
-					{
-						data:  Object.keys(data.lineData),
+					legend: {
+						data: [Object.keys(data.lineData)[0]],
 						right: 10,
-						top: 30,
 					},
-
 					xAxis: {
-						name: 'Time(s)',//和"name"通用!
-						min: beginTime, 
-        				max: endTime,  //起始&终止
-						//data: []
+						data: data.lineData[Object.keys(data.lineData)[0]].time
 					},
-
 					yAxis: {
 						name: selected == 0 ? 'Time in Window' : 'Visits in Window',
 					},
-					series: inputLineDatas
-				}, true);//true代表可以自动清除上一次加载的数据
+					series: [
+						// 根据名字对应到相应的系列
+						{
+							name: Object.keys(data.lineData)[0],
+							data: data.lineData[Object.keys(data.lineData)[0]].count
+						},
+					]
+				});
 
 				var testData = echarts.dataTool.prepareBoxplotData([
 					[850, 740, 900, 1070, 930, 850, 950, 980, 980, 880, 1000, 980, 930, 650, 760, 810, 1000, 1000, 960, 960],

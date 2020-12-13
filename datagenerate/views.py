@@ -14,7 +14,7 @@ def paramParse(request):
     featureType = int(request.POST.get('featureType', 0))  # 获取特征类型，默认为0(频率)
     windowsType = int(request.POST.get('windowsType', 0))  # 获取窗口类型，默认为0(时间窗口)
     viewObject = int(request.POST.get('viewObject', 0))  # 获取观察对象，默认为0(ip)
-    viewTarget = request.POST.get('viewTarget', 'all')  # 获取目标，默认为all(全部目标）
+    viewTarget = request.POST.getlist('viewTarget', [])  # 获取目标，默认为all(全部目标）
     beginTime = int(request.POST.get('beginTime', 0))  # 开始时间，默认为0
     endTime = int(request.POST.get('endTime', -1))  # 结束时间，默认为-1(最大时间值）
     windowsSize = int(request.POST.get('windowsSize', 200))  # 特征窗口大小，默认为200
