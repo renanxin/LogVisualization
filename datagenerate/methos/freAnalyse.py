@@ -206,33 +206,30 @@ def freAnalyseBox(name, windowsType, viewObject, viewTarget, beginTime, endTime,
                 break
             if info[viewobject] not in viewTargets:
                 continue
-            tmp[info[viewobject]].append(info['time'])
+
+            tmp_key = info[viewobject]
+            tmp[tmp_key].append(info['time'])
             code = info['status']['code']  # 得到此次访问的状态码
             # 获取访问的状态 0表示通过 1表示怀疑 2表示封禁
-            if code == 0:
-                state = 0
-            elif code == 1:
-                state = 1
-            else:
-                state = 2
-            if len(tmp[info[viewobject]]) == windowsSize:
-                if state != preState[info[viewobject]] and info['time'] > beginTime and preState[
-                    info[viewobject]] != -1:  # 发生状态变化且时间符合条件
+            state = code
+            if len(tmp[tmp_key]) == windowsSize:
+                if state != preState[tmp_key] and info['time'] > beginTime and preState[tmp_key] != -1:  # 发生状态变化且时间符合条件
+                    tmp_value = tmp[info[viewobject]][-1] - tmp[info[viewobject]][0]
                     if state == 0:
-                        if preState[info[viewobject]] == 1:  # 怀疑->安全
-                            count[info[viewobject]][2].append(tmp[info[viewobject]][-1] - tmp[info[viewobject]][0])
+                        if preState[tmp_key] == 1:  # 怀疑->安全
+                            count[tmp_key][2].append(tmp_value)
                         else:  # 封禁->安全
-                            count[info[viewobject]][3].append(tmp[info[viewobject]][-1] - tmp[info[viewobject]][0])
+                            count[tmp_key][3].append(tmp_value)
                     elif state == 1:
-                        if preState[info[viewobject]] == 0:  # 安全->怀疑
-                            count[info[viewobject]][0].append(tmp[info[viewobject]][-1] - tmp[info[viewobject]][0])
+                        if preState[tmp_key] == 0:  # 安全->怀疑
+                            count[tmp_key][0].append(tmp_value)
                     elif state == 2:
-                        if preState[info[viewobject]] == 0:  # 安全->封禁
-                            count[info[viewobject]][1].append(tmp[info[viewobject]][-1] - tmp[info[viewobject]][0])
+                        if preState[tmp_key] == 0:  # 安全->封禁
+                            count[tmp_key][1].append(tmp_value)
                         else:  # 怀疑->封禁
-                            count[info[viewobject]][4].append(tmp[info[viewobject]][-1] - tmp[info[viewobject]][0])
-                del tmp[info[viewobject]][0]  # 清除首记录
-            preState[info[viewobject]] = state  # 记录前一次状态
+                            count[tmp_key][4].append(tmp_value)
+                del tmp[tmp_key][0]  # 清除首记录
+            preState[tmp_key] = state  # 记录前一次状态
         res = count
 
 
@@ -256,41 +253,33 @@ def freAnalyseBox(name, windowsType, viewObject, viewTarget, beginTime, endTime,
                 break
             if info[viewobject] not in viewTargets:
                 continue
-            tmp[info[viewobject]].append(info['time'])
-            if info['time'] - tmp[info[viewobject]][0] >= windowsSize:
-                flag[info[viewobject]] = True
-                while info['time'] - tmp[info[viewobject]][0] > windowsSize:
-                    del tmp[info[viewobject]][0]
+
+            tmp_key = info[viewobject]
+            tmp[tmp_key].append(info['time'])
+            if info['time'] - tmp[tmp_key][0] >= windowsSize:
+                flag[tmp_key] = True
+                while info['time'] - tmp[tmp_key][0] > windowsSize:
+                    del tmp[tmp_key][0]
             code = info['status']['code']  # 得到此次访问的状态码
             # 获取访问的状态 0表示通过 1表示怀疑 2表示封禁
-            if code == 0:
-                state = 0
-            elif code == 1:
-                state = 1
-            else:
-                state = 2
-            if flag[info[viewobject]]:  # 满足记录条件
-                if state != preState[info[viewobject]] and info['time'] > beginTime and preState[
-                    info[viewobject]] != -1:  # 发生状态变化且时间符合条件
+            state = code
+            if flag[tmp_key]:  # 满足记录条件
+                if state != preState[tmp_key] and info['time'] > beginTime and preState[tmp_key] != -1:  # 发生状态变化且时间符合条件
+                    tmp_value = len(tmp[info[viewobject]])
                     if state == 0:
-                        if preState[info[viewobject]] == 1:  # 怀疑->安全
-                            count[info[viewobject]][2].append(
-                                tmp[info[viewobject]][-1] - tmp[info[viewobject]][0])
+                        if preState[tmp_key] == 1:  # 怀疑->安全
+                            count[tmp_key][2].append(tmp_value)
                         else:  # 封禁->安全
-                            count[info[viewobject]][3].append(
-                                tmp[info[viewobject]][-1] - tmp[info[viewobject]][0])
+                            count[tmp_key][3].append(tmp_value)
                     elif state == 1:
-                        if preState[info[viewobject]] == 0:  # 安全->怀疑
-                            count[info[viewobject]][0].append(
-                                tmp[info[viewobject]][-1] - tmp[info[viewobject]][0])
+                        if preState[tmp_key] == 0:  # 安全->怀疑
+                            count[tmp_key][0].append(tmp_value)
                     elif state == 2:
-                        if preState[info[viewobject]] == 0:  # 安全->封禁
-                            count[info[viewobject]][1].append(
-                                tmp[info[viewobject]][-1] - tmp[info[viewobject]][0])
+                        if preState[tmp_key] == 0:  # 安全->封禁
+                            count[tmp_key][1].append(tmp_value)
                         else:  # 怀疑->封禁
-                            count[info[viewobject]][4].append(
-                                tmp[info[viewobject]][-1] - tmp[info[viewobject]][0])
-            preState[info[viewobject]] = state  # 记录前一次状态
+                            count[tmp_key][4].append(tmp_value)
+            preState[tmp_key] = state  # 记录前一次状态
         res = count
     for key in res.keys():
         for i in range(len(res[key])):

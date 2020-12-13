@@ -185,7 +185,7 @@ def metaInfoCreate(fileName):
         metaInfo['endTime'] = end
         metaInfo['endTimeStr'] = endStr
         metaInfo['ipNum'] = len(ips)
-        # metaInfo['accountNum'] = len(accounts)
+        metaInfo['accountNum'] = 0      # 由于暂时还没有账号信息，这里直接设置为0
         metaInfo['filename'] = fileName
 
 
