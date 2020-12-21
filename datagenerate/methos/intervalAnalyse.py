@@ -360,7 +360,7 @@ def intervalAnalyseBox(name, windowsType, viewObject, viewTarget, beginTime, end
 #                         if i % 50000==0:
 #                             print(i)
 #                         line = readFrom.readline().strip()
-#                         if len(line.strip()) == 0:  # 独到文件末尾
+#                         if len(line.strip()) == 0:  # 读到文件末尾
 #                             break
 #                         paper = json.loads(line)
 #                         if paper.get("lang","ch") != "en":  # 不是英文文章
