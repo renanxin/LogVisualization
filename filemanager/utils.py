@@ -78,7 +78,6 @@ def strToTime(strDate,setBeginTime=False):
     '''
     global pastDays
     passTime = np.zeros((4,),dtype=int)
-    strDate = strDate[:-4]
     now = re.split('-|:|[ ]', strDate)
     now = np.array(now,dtype=int)
     if not setBeginTime:
@@ -118,11 +117,11 @@ def compare(json1,json2):
 def metaInfoCreate(fileName):
     baseDir = os.path.dirname(os.path.abspath(__name__))
     ips = set()
-    # accounts = set()
+    accounts = set()
     metaInfo = {}
-    rtnCodeType = set()     # 结果码种类
-    rtnCodeType.add('000000')
-    rtnCodeType.add('900006')
+    # rtnCodeType = set()     # 结果码种类
+    # rtnCodeType.add('000000')
+    # rtnCodeType.add('900006')
     with open(os.path.join(baseDir, 'tmp', fileName)) as f:
         logs = json.load(f)
         begin = -1
@@ -133,28 +132,24 @@ def metaInfoCreate(fileName):
         metaInfo['accountDetail'] = {}
 
         # 添加time项表示距特定时间所过去的秒
-        strToTime('2020-1-1 00:00:00.000',True)
-        minTime = float(strToTime(logs[0]['_source']['operationTime']))
+        strToTime('2020-1-1 00:00:00',True)
+        minTime = float(strToTime(logs[0]['operationTime'][:-4]))
         for log in logs:
-            log['time'] = float(strToTime(log['_source']['operationTime']))
+            log['time'] = float(strToTime(log['operationTime'][:-4]))
             minTime = min(minTime,log['time'])
 
         # 将原始json转化为目标格式
         for log in logs:
             log['time'] -= minTime
-            log['ip'] = log['_source']['clientIP']
-            del log['_source']['clientIP']
-            log['timeStr'] = log['_source']['operationTime']
-            del log['_source']['operationTime']
-            result = json.loads(log['_source']['operationResult'])
+            log['ip'] = log['clientIP']
+            del log['clientIP']
+            log['timeStr'] = log['operationTime'][:-4]
+            del log['operationTime']
             log['status'] = {}
-            if result['rtnCode'] == '000000':
-                log['status']['code'] = 0
-            elif result['rtnCode'] == '900006':
-                log['status']['code'] = 2
-            else:
-                log['status']['code'] = -1
-            del log['_source']['operationResult']
+            log['status']['code'] = log['operationResult']['rtnCode']
+            del log['operationResult']
+            log['account'] = log['operatorName']
+            del log['operatorName']
         logs = sorted(logs,key=cmp_to_key(compare))     # 按照时间排序
 
         for log in logs:
@@ -169,23 +164,25 @@ def metaInfoCreate(fileName):
                 ips.add(log['ip'])
                 metaInfo['ipDetail'][log['ip']] = [0, 0, 0]
             # 遇到新的account
-            # if log['account'] not in accounts:
-            #     accounts.add(log['account'])
-            #     metaInfo['accountDetail'][log['account']] = [0, 0, 0]
+            if log['account'] not in accounts:
+                accounts.add(log['account'])
+                metaInfo['accountDetail'][log['account']] = [0, 0, 0]
             # 判断此次访问的结果
             if log['status']['code'] == 0:       # 成功状态
                 metaInfo['ipDetail'][log['ip']][0] += 1
-                # metaInfo['accountDetail'][log['account']][0] += 1
+                metaInfo['accountDetail'][log['account']][0] += 1
             elif log['status']['code'] == 1:     # 封禁状态
                 metaInfo['ipDetail'][log['ip']][2] += 1
-                # metaInfo['accountDetail'][log['account']][1] += 1
-
+                metaInfo['accountDetail'][log['account']][2] += 1
+            else:   # 怀疑状态
+                metaInfo['ipDetail'][log['ip']][1] += 1
+                metaInfo['accountDetail'][log['account']][1] += 1
         metaInfo['beginTime'] = begin
         metaInfo['beginTimeStr'] = beginStr
         metaInfo['endTime'] = end
         metaInfo['endTimeStr'] = endStr
         metaInfo['ipNum'] = len(ips)
-        metaInfo['accountNum'] = 0      # 由于暂时还没有账号信息，这里直接设置为0
+        metaInfo['accountNum'] = len(accounts)
         metaInfo['filename'] = fileName
 
 

@@ -325,3 +325,70 @@ def intervalAnalyseBox(name, windowsType, viewObject, viewTarget, beginTime, end
     return res
 
 # print(freAnalyseBox('agents_1.json',0,1,'255.168.89.5',0,-1,200))
+
+
+
+
+# import os
+# import json
+# import re
+#
+#
+# valid_count = 0     # 合法句子数
+# abstract_meanLen = 0
+# title_meanLen = 0
+# sentence_meanNum = 0
+# abstactSum = 0
+# titleSum = 0
+# sentenceSum = 0
+# pattern = re.compile("(?<=[.!?])\s+")
+# pattern2 = re.compile("\s+")
+# files = os.listdir(".")
+# # files = ['mag_papers_0.txt']
+# i = 0
+# for file in files:
+#     if os.path.isfile(file) and file !='analyse.py':
+#         print(file)
+#         with open(file) as readFrom:
+#             while True:
+#                 line = readFrom.readline()
+#                 if len(line.strip()) == 0:  # 独到文件末尾
+#                     break
+#                 with open("./clean/paper_%02d"%(valid_count/500000),'a') as writeTo:
+#                     while True:
+#                         i += 1
+#                         if i % 50000==0:
+#                             print(i)
+#                         line = readFrom.readline().strip()
+#                         if len(line.strip()) == 0:  # 独到文件末尾
+#                             break
+#                         paper = json.loads(line)
+#                         if paper.get("lang","ch") != "en":  # 不是英文文章
+#                             continue
+#                         if len(paper.get('title',""))==0 or len(paper.get('abstract',""))==0:
+#                             continue
+#                         valid_count += 1
+#                         sentenceSum += len(pattern.split(paper.get('abstract')))
+#                         abstactSum += len(pattern2.split(paper.get('abstract')))
+#                         titleSum += len(pattern2.split(paper.get('title')))
+#                         writeTo.write(line+'\n')
+#                         if valid_count % 500000 == 0:   # 一个文件100000条数据
+#                             break
+#                     print("break")
+#                     if valid_count%500000!=0:
+#                         continue
+#                     sentence_meanNum = ((valid_count/500000-1)*sentence_meanNum + sentenceSum/500000)/(valid_count/500000)
+#                     title_meanLen = ((valid_count/500000-1)*title_meanLen + titleSum/500000)/(valid_count/500000)
+#                     abstract_meanLen = ((valid_count/500000-1)*abstract_meanLen + abstactSum/500000)/(valid_count/500000)
+#                     sentenceSum = 0
+#                     abstactSum = 0
+#                     titleSum = 0
+#                     print(sentence_meanNum)
+#                     print(title_meanLen)
+#                     print(abstract_meanLen)
+
+
+
+# 6.441412909090911
+# 11.194027272727272
+# 147.96769854545454
