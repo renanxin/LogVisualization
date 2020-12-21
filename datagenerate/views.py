@@ -20,7 +20,7 @@ def frequencydata(request):
     endTime = int(request.POST.get('endTime', ''))  # 结束时间，默认为-1(最大时间值）
     windowsSize = int(request.POST.get('windowsSize', 200))  # 特征窗口大小，默认为200
 
-    res = {'error': 0}
+    res = {'code': 200}
 
     # 将beginTime和endTime转化为数值型
     baseDir = os.path.dirname(os.path.abspath(__name__))
@@ -40,10 +40,9 @@ def frequencydata(request):
 
 
     if beginTime >= endTime and endTime != -1:
-        res['error'] = 1
-        res['error_msg'] = '开始时间应小于结束时间'
+        res['code'] = 410
 
-    if res['error'] != 0:  # 传送的参数错误，直接返回
+    if res['code'] != 200:  # 传送的参数错误，直接返回
         return HttpResponse(json.dumps(res), content_type="application/json")
 
     res['lineData'] = freAnalyseLine(fileName, windowsType, viewObject, viewTarget, beginTime, endTime, windowsSize)
@@ -62,7 +61,7 @@ def intervaldata(request):
     endTime = int(request.POST.get('endTime', ''))  # 结束时间，默认为-1(最大时间值）
     windowsSize = int(request.POST.get('windowsSize', 200))  # 特征窗口大小，默认为200
 
-    res = {'error': 0}
+    res = {'code': 200}
 
     # 将beginTime和endTime转化为数值型
     baseDir = os.path.dirname(os.path.abspath(__name__))
@@ -82,10 +81,9 @@ def intervaldata(request):
 
 
     if beginTime >= endTime and endTime != -1:
-        res['error'] = 1
-        res['error_msg'] = '开始时间应小于结束时间'
+        res['code'] = 410
 
-    if res['error'] != 0:  # 传送的参数错误，直接返回
+    if res['code'] != 0:  # 传送的参数错误，直接返回
         return HttpResponse(json.dumps(res), content_type="application/json")
 
     res['lineData'] = intervalAnalyseLine(fileName, windowsType, viewObject, viewTarget, beginTime, endTime, windowsSize)
