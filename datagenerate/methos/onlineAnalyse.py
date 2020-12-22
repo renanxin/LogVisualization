@@ -180,5 +180,5 @@ def onlineAnalyseBox(name, deltaTime, viewObject, viewTarget, beginTime, endTime
     for key in preState.keys():
         res[key] = []
         for i in range(5):
-            res[key].append([np.min(preState[key][i]), np.mean(preState[key][i]), np.max(preState[key][i]), np.std(preState[key][i])])
+            res[key].append([np.min(np.array(preState[key][i])), np.mean(np.array(preState[key][i])), np.max(np.array(preState[key][i])), np.std(np.array(preState[key][i]))])
     return res
